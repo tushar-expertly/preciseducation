@@ -35,7 +35,6 @@ function Signup() {
   };
 
   const handleSubmit = async (e) => {
-    localStorage.clear();
     e.preventDefault();
     if (signupState.password !== signupState.passwordagain) {
       setPasswordError("Please enter the same password.");
@@ -44,16 +43,17 @@ function Signup() {
     if (signupState.password === signupState.passwordagain) {
       setPasswordError("");
     }
-
+    
     if (!captchaValue) {
       setCaptchaError("You can't leave Captcha Code empty");
       return;
     }
-
+    
     setPasswordError("");
     setCaptchaError("");
     setIsLoading(true);
     await createAccount();
+    localStorage.clear();
   };
 
   const createAccount = async () => {
