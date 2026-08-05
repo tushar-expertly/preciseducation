@@ -1,4 +1,4 @@
-import React, { useContext, useReducer, useEffect, useCallback } from "react";
+import React, { useContext, useReducer, useCallback } from "react";
 import { GET_CATEGORIES, GET_COURSES, GET_SINGLE_COURSE } from "../actions";
 import reducer from "../reducers/courses_reducer";
 import courses from "../utils/data";
@@ -18,15 +18,15 @@ export const CoursesProvider = ({ children }) => {
   const fetchCourse = async () => {
     try {
       const response = await axios.get(
-        "https://api.goexpertly.com/admin/courses"
+        "https://api.goexpertly.com/admin/courses",
       );
       const filteredCourses = response.data.filter((course) =>
         course.Sites.some(
-          (site) => site.name === "preciseducation" || site.siteId === 34
-        )
+          (site) => site.name === "preciseducation" || site.siteId === 34,
+        ),
       );
       const allCourses = filteredCourses?.sort(
-        (a, b) => new Date(a.webinarDate) - new Date(b.webinarDate)
+        (a, b) => new Date(a.webinarDate) - new Date(b.webinarDate),
       );
       dispatch({ type: GET_COURSES, payload: allCourses });
     } catch (error) {
@@ -38,13 +38,13 @@ export const CoursesProvider = ({ children }) => {
     async (id) => {
       try {
         const existingCourse = state.courses.find(
-          (course) => course.courseID === Number(id)
+          (course) => course.courseID === Number(id),
         );
         if (existingCourse) {
           dispatch({ type: GET_SINGLE_COURSE, payload: existingCourse });
         } else {
           const response = await axios.get(
-            `https://api.goexpertly.com/admin/courses/${id}`
+            `https://api.goexpertly.com/admin/courses/${id}`,
           );
           dispatch({ type: GET_SINGLE_COURSE, payload: response.data });
         }
@@ -52,7 +52,7 @@ export const CoursesProvider = ({ children }) => {
         console.error("Error fetching single course:", error);
       }
     },
-    [state.courses]
+    [state.courses],
   );
 
   const fetchCategories = () => {
@@ -60,16 +60,18 @@ export const CoursesProvider = ({ children }) => {
     dispatch({ type: GET_CATEGORIES, payload: categories });
   };
 
-  useEffect(() => {
-    fetchCourse();
-    fetchCategories();
-  }, []);
+  // useEffect(() => {
+  //   fetchCourse();
+  //   fetchCategories();
+  // }, []);
 
   return (
     <CoursesContext.Provider
       value={{
         ...state,
+        fetchCourse,
         fetchSingleCourse,
+        fetchCategories,
       }}
     >
       {children}

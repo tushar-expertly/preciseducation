@@ -18,11 +18,21 @@ import {
 } from "mdb-react-ui-kit";
 
 function Training() {
-  const { courses } = useCoursesContext();
+  const { courses, fetchCourse } = useCoursesContext();
   const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (courses.length === 0) {
+      fetchCourse();
+    }
+  }, []);
+  useEffect(() => {
+    if (courses.length > 0) {
+      setLoading(false);
+    }
+  }, [courses]);
 
   const filteredCourses = courses.filter(
-    (course) => course.archieve === null || course.archieve === false
+    (course) => course.archieve === null || course.archieve === false,
   );
 
   // console.log(courses);
@@ -216,7 +226,7 @@ function Training() {
                           <div className=" bg-gradient-to-r from-black via-black/80 to-black/40 text-white font-bold text-center py-2 mt-2 rounded">
                             {course?.webinarDate
                               ? new Date(
-                                  course?.webinarDate
+                                  course?.webinarDate,
                                 ).toLocaleDateString("en-US", {
                                   weekday: "long",
                                   year: "numeric",
